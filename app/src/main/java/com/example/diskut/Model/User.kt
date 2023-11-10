@@ -19,7 +19,7 @@ class User (
 
     companion object {
         fun deserialize(serialized: ByteArray) : User {
-            return Json.decodeFromString(serialized.decodeToString())
+            return Json.decodeFromString(serialized.decodeToString().trim { it < ' ' } )
         }
     }
 

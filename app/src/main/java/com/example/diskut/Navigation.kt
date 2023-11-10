@@ -20,10 +20,10 @@ import com.example.diskut.View.MainPage.MainPage
 import com.example.diskut.View.QuestPage.QuestPage
 
 @Composable
-fun NavigationHost(navController: NavHostController) {
+fun NavigationHost(navController: NavHostController, bluetooth: Bluetooth) {
     NavHost(navController = navController, startDestination = "main") {
         composable("main") {
-            MainPage(goalPoints = 1000)
+            MainPage(goalPoints = 1000, bluetooth = bluetooth)
         }
         composable("quest") {
             QuestPage(leaderboard = test_users, questList = test_quest)

@@ -1,6 +1,7 @@
 package com.example.diskut.View.MainPage
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
@@ -32,12 +33,19 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.example.diskut.Bluetooth
+import com.example.diskut.MainActivity
+import com.example.diskut.Model.User
+import com.example.diskut.Model.UserType
 import com.example.diskut.ui.theme.AppTheme
+import com.example.diskut.user
 
 @Composable
-fun MainPage(goalPoints: Int) {
+fun MainPage(goalPoints: Int, bluetooth: Bluetooth) {
     var expanded by remember { mutableStateOf(false) }
     var currPoints by remember { mutableStateOf(270) }
+
+    var peerUser by remember { mutableStateOf(User("", "", UserType.STAFF, "", 0)) }
 
     val interactionSource = remember { MutableInteractionSource() }
 
@@ -45,9 +53,29 @@ fun MainPage(goalPoints: Int) {
         modifier = Modifier
             .fillMaxSize()
             .clickable(interactionSource = interactionSource, indication = null) {
-                expanded = !expanded
+                if (bluetooth.adapter.name == "Jing's A12") {
+                    Log.i("diskut", "warren")
+                    bluetooth.startServer {
+                        Log.i("diskut", "connection established")
+                        bluetooth.send(user.serialize())
+                        val peer = ByteArray(1024)
+                        bluetooth.receive(peer)
+                        peerUser = User.deserialize(peer)
+                        expanded = !expanded
+                    }
+                } else {
+                    Log.i("diskut", "not warren")
+                    bluetooth.startClient {
+                        Log.i("diskut", "connection established")
+                        bluetooth.send(user.serialize())
+                        val peer = ByteArray(1024)
+                        bluetooth.receive(peer)
+                        peerUser = User.deserialize(peer)
+                        expanded = !expanded
+                    }
+                }
             }) {
-        
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -73,8 +101,8 @@ fun MainPage(goalPoints: Int) {
 
             AnimatedPeerDetails(
                 modifier = Modifier.weight(0.1f),
-                username = "Jerry",
-                occupation = "Student - M23404",
+                username = peerUser.name,
+                occupation = "${peerUser.type} - ${peerUser.value}",
                 expanded = expanded
             )
 
@@ -82,15 +110,15 @@ fun MainPage(goalPoints: Int) {
     }
 }
 
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-private fun MainPagePreview() {
-    AppTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            MainPage(1000)
-        }
-    }
-}
+//@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+//@Composable
+//private fun MainPagePreview() {
+//    AppTheme {
+//        Surface(
+//            modifier = Modifier.fillMaxSize(),
+//            color = MaterialTheme.colorScheme.background
+//        ) {
+//            MainPage(1000)
+//        }
+//    }
+//}

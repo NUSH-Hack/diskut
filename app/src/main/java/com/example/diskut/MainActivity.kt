@@ -53,6 +53,8 @@ import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
 
+val user = User("h2010138@nushigh.edu.sg", "Tan Junheng", UserType.STUDENT, "Year 4", 0)
+
 val test_users: List<User> = listOf(
     User("", "Prannaya", UserType.STUDENT,"Year 6", 1000),
     User("", "Warren", UserType.STUDENT, "Year 4", 600),
@@ -134,7 +136,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    App(leaderboard = test_users)
+                    App(leaderboard = test_users, bluetooth = bluetooth)
                 }
             }
         }
@@ -213,7 +215,7 @@ fun BluetoothTest(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun App(leaderboard: List<User>) {
+private fun App(leaderboard: List<User>, bluetooth: Bluetooth) {
     val navController = rememberNavController()
 
     Scaffold(
@@ -224,16 +226,16 @@ private fun App(leaderboard: List<User>) {
         Box(modifier = Modifier
             .fillMaxSize()
             .padding(padding_values)){
-            NavigationHost(navController = navController)
+            NavigationHost(navController = navController, bluetooth = bluetooth)
         }
     }
 }
 
 
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-private fun AppPreview() {
-    AppTheme {
-        App(leaderboard = test_users)
-    }
-}
+//@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+//@Composable
+//private fun AppPreview() {
+//    AppTheme {
+//        App(leaderboard = test_users)
+//    }
+//}
