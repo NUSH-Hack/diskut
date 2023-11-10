@@ -35,7 +35,7 @@ import com.example.diskut.ui.theme.AppTheme
 internal fun Leaderboard(leaderboard: List<User>, modifier: Modifier = Modifier) {
     Row(modifier = modifier
         .fillMaxWidth()
-        .fillMaxHeight(0.25f), horizontalArrangement = Arrangement.SpaceEvenly) {
+        .fillMaxHeight(0.35f), horizontalArrangement = Arrangement.SpaceEvenly) {
         // second place
         Place(
             modifier = Modifier
@@ -46,7 +46,7 @@ internal fun Leaderboard(leaderboard: List<User>, modifier: Modifier = Modifier)
             style = MaterialTheme.typography.labelSmall
         )
 
-        Spacer(modifier = Modifier.weight(0.025f))
+        Spacer(modifier = Modifier.weight(0.035f))
 
         // first place
         Place(
@@ -58,7 +58,7 @@ internal fun Leaderboard(leaderboard: List<User>, modifier: Modifier = Modifier)
             style = MaterialTheme.typography.labelLarge
         )
 
-        Spacer(modifier = Modifier.weight(0.025f))
+        Spacer(modifier = Modifier.weight(0.035f))
 
         // third place
         Place(
