@@ -13,17 +13,14 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.diskut.ui.theme.AppTheme
 
+
 @Composable
 fun QuestPage(content_padding: Dp) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(content_padding)
-    ) {
+    Column {
         Leaderboard()
+
         QuestList()
     }
-
 }
 
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)

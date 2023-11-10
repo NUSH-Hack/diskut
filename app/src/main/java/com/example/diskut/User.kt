@@ -8,7 +8,8 @@ import kotlinx.serialization.json.Json
 class User (
     val email: String,
     val name: String,
-    val year: Int
+    val year: Int,
+    val points: Int
 ) {
     val majors: ArrayList<String> = arrayListOf()
     val teachers: ArrayList<String> = arrayListOf()
