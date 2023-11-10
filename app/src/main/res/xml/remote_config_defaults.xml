@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<defaults>
+  <entry>
+    <key>global_quest</key>
+    <value>{"Description":"Talk to 3 Staff!", "Completed":0, "Goal":3}</value>
+  </entry>
+</defaults>

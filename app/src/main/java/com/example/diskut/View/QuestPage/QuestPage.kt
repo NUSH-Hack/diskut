@@ -16,10 +16,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.diskut.ui.theme.AppTheme
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.get
+import com.google.firebase.remoteconfig.ktx.remoteConfig
+import org.json.JSONObject
 
 @Composable
 fun QuestPage(content_padding: Dp) {
     val questList = remember { mutableStateListOf<Quest>() }
+    val remoteConfig = Firebase.remoteConfig
+    val questJson = remoteConfig["global_quest"].asString()
+    val json = JSONObject(questJson)
+    questList.add(Quest(
+        json.getString("Description"),
+        json.getInt("Completed"),
+        json.getInt("Goal"),
+    ))
     questList.addAll(q)
 
     LazyColumn(modifier = Modifier
