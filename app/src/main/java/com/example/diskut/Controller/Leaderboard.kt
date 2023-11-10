@@ -32,12 +32,19 @@ fun FetchLeaderboard(): List<User> {
     return leaderboard
 }
 
-fun UploadLeaderboard(){
+fun uploadLeaderboard(leaderboard: ArrayList<User>) {
     // Upload leaderboard
 //    val leaderboardJson = JSONArray()
 //    for (i in 0..2) {
 //        leaderboardJson.put(leaderboard[i].serialize())
 //    }
 //    storageRef.child("leaderboard.json").putBytes(leaderboardJson.toString().toByteArray())
+    val leaderboardJson = JSONArray()
+    for (i in 0..2) {
+        leaderboardJson.put(leaderboard[i].serialize())
+    }
+    val storage = Firebase.storage
+    var storageRef = storage.reference
+    storageRef.child("leaderboard.json").putBytes(leaderboardJson.toString().toByteArray())
 
 }
