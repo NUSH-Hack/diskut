@@ -1,5 +1,6 @@
 package com.example.diskut
 
+import com.ml.shubham0204.glove_android.GloVe
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -14,6 +15,7 @@ class User (
 ) {
     val majors: ArrayList<String> = arrayListOf()
     val teachers: ArrayList<String> = arrayListOf()
+    val interests: ArrayList<String> = arrayListOf()
 
     companion object {
         fun deserialize(serialized: ByteArray) : User {
@@ -36,11 +38,34 @@ class User (
         return other.teachers.intersect(teachers.toSet())
     }
 
+    suspend fun findCommonInterests(other: User): ArrayList<InterestSimilarityPair> {
+        lateinit var embeddings: GloVe.GloVeEmbeddings
+        GloVe.loadEmbeddings {
+            embeddings = it
+        }
+        val similarities: ArrayList<InterestSimilarityPair> = arrayListOf()
+        interests.forEach { myInterest ->
+            other.interests.forEach {otherInterest ->
+                val similarity = GloVe.compare(embeddings.getEmbedding(myInterest), embeddings.getEmbedding(otherInterest))
+                InterestSimilarityPair(myInterest, otherInterest, similarity)
+            }
+        }
+        similarities.sortBy { it.similarity }
+        similarities.reverse()
+        return similarities
+    }
+
     fun serialize(): ByteArray {
         // TODO: Chnage this to whatever is needed for Bluetooth communication
         return Json.encodeToString(this).toByteArray()
     }
 }
+
+data class InterestSimilarityPair(
+    val interestOne: String,
+    val interestTwo: String,
+    val similarity: Float
+)
 
 enum class UserType {
     STUDENT, TEACHER, STAFF
