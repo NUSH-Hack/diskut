@@ -20,11 +20,11 @@ import androidx.compose.ui.unit.dp
 import com.example.diskut.ui.theme.AppTheme
 
 @Composable
-fun MainPage(goalPoints: Int, content_padding: Dp) {
+fun MainPage(goalPoints: Int) {
     var currPoints by remember { mutableStateOf(270) }
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(content_padding),
+        modifier = Modifier.fillMaxSize().padding(24.dp),
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Top
     ) {
@@ -44,7 +44,7 @@ private fun MainPagePreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            MainPage(1000, 32.dp)
+            MainPage(1000)
         }
     }
 }

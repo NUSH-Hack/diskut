@@ -10,13 +10,14 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.diskut.test_quest
 import com.google.firebase.Firebase
 import com.google.firebase.remoteconfig.get
 import com.google.firebase.remoteconfig.remoteConfig
 import org.json.JSONObject
 
 @Composable
-internal fun QuestList() {
+internal fun QuestList(questList: List<Quest>) {
 //    val remoteConfig = Firebase.remoteConfig
 //    val questJson = remoteConfig["global_quest"].asString()
 //    val json = JSONObject(questJson)
@@ -30,7 +31,7 @@ internal fun QuestList() {
     //        json.getInt("Goal"),
     //    ))
 
-    questList.addAll(q)
+    questList.addAll(test_quest)
 
     LazyColumn(modifier = Modifier
         .fillMaxSize(),
@@ -42,3 +43,4 @@ internal fun QuestList() {
         })
     }
 }
+

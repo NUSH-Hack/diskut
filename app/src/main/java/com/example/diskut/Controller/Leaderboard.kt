@@ -1,12 +1,12 @@
 package com.example.diskut.Controller
 
-import com.example.diskut.User
-import com.example.diskut.UserType
+import com.example.diskut.Model.User
+import com.example.diskut.Model.UserType
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import org.json.JSONArray
 
-fun FetchLeaderboard(): ArrayList<User> {
+fun FetchLeaderboard(): List<User> {
     val storage = Firebase.storage
     var storageRef = storage.reference
 
@@ -20,7 +20,7 @@ fun FetchLeaderboard(): ArrayList<User> {
             .put(User("", "Mr. Meow", UserType.TEACHER, "Chemistry Department", 2).serialize())
     }
 
-    val leaderboard: ArrayList<User> = arrayListOf()
+    val leaderboard: MutableList<User> = mutableListOf()
     for (i in 0..2) {
         leaderboard.add(User.deserialize(leaderboardJson.getString(i).toByteArray()))
     }
@@ -34,10 +34,10 @@ fun FetchLeaderboard(): ArrayList<User> {
 
 fun UploadLeaderboard(){
     // Upload leaderboard
-    val leaderboardJson = JSONArray()
-    for (i in 0..2) {
-        leaderboardJson.put(leaderboard[i].serialize())
-    }
-    storageRef.child("leaderboard.json").putBytes(leaderboardJson.toString().toByteArray())
+//    val leaderboardJson = JSONArray()
+//    for (i in 0..2) {
+//        leaderboardJson.put(leaderboard[i].serialize())
+//    }
+//    storageRef.child("leaderboard.json").putBytes(leaderboardJson.toString().toByteArray())
 
 }

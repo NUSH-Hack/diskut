@@ -1,4 +1,4 @@
-package com.example.diskut
+package com.example.diskut.Model
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
@@ -42,6 +42,4 @@ class User (
     }
 }
 
-enum class UserType {
-    STUDENT, TEACHER, STAFF
-}
+
