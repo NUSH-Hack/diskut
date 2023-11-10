@@ -40,6 +40,9 @@ import com.example.diskut.MainActivity
 import com.example.diskut.Model.User
 import com.example.diskut.Model.UserType
 import com.example.diskut.ui.theme.AppTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 val yueheng = User("h2010157@nushigh.edu.sg", "Wong Yue Heng", UserType.STUDENT, "Year 4", 0)
 val warren = User("h2230006@nushigh.edu.sg", "Warren Zhou", UserType.STUDENT, "Year 4", 10)
@@ -79,7 +82,10 @@ fun MainPage(goalPoints: Int, bluetooth: Bluetooth) {
                         expanded = !expanded
 
                         conversationCues.clear()
-                        conversationCues.addAll(GenerateConversationCues(peerUser, currUser))
+                        CoroutineScope(Dispatchers.Main).launch {
+                            conversationCues.addAll(GenerateConversationCues(peerUser, currUser))
+                        }
+
                     }
                 } else {
                     Log.i("diskut", "not warren")
@@ -93,7 +99,9 @@ fun MainPage(goalPoints: Int, bluetooth: Bluetooth) {
                         expanded = !expanded
 
                         conversationCues.clear()
-                        conversationCues.addAll(GenerateConversationCues(peerUser, currUser))
+                        CoroutineScope(Dispatchers.Main).launch {
+                            conversationCues.addAll(GenerateConversationCues(peerUser, currUser))
+                        }
                     }
                 }
             }) {

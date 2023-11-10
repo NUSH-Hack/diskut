@@ -2,7 +2,21 @@ package com.example.diskut.Controller
 
 import com.example.diskut.Model.User
 
-fun GenerateConversationCues(peerUser: User, currUser: User): List<String> {
+suspend fun GenerateConversationCues(peerUser: User, currUser: User): List<String> {
     // do some logic here
-    return listOf("You are both stupid", "You are both silly", "You are both CS majors")
+    val cues : ArrayList<String> = arrayListOf()
+    currUser.findCommonMajor(peerUser).forEach {
+        cues.add("You both take $it")
+    }
+    currUser.findCommonTeacher(peerUser).forEach {
+        cues.add("You've both been taught by $it")
+    }
+    val commonInterests = currUser.findCommonInterests(peerUser)
+    for (i in 0..2) {
+        if (commonInterests.isNotEmpty()) {
+            val commonInterest = commonInterests.removeFirst()
+            cues.add("You like ${commonInterest.interestOne}, they like ${commonInterest.interestTwo}")
+        }
+    }
+    return cues.toList()
 }
