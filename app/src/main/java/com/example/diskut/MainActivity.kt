@@ -4,8 +4,6 @@ import android.Manifest
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
-import android.bluetooth.BluetoothServerSocket
-import android.bluetooth.BluetoothSocket
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -13,6 +11,7 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -20,12 +19,20 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import com.example.diskut.ui.theme.AppTheme
@@ -37,13 +44,9 @@ import java.io.IOException
 import java.util.UUID
 
 class MainActivity : ComponentActivity() {
-    private val bluetoothAdapter: BluetoothAdapter by lazy {
-        val bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-        bluetoothManager.adapter
-    }
+    private lateinit var bluetoothAdapter: BluetoothAdapter
 
-    private lateinit var socket: BluetoothServerSocket
-    private val uuid = UUID.fromString("317a9c6e-90d1-418b-afa4-b5866a52bb5c")
+    private lateinit var bluetooth: Bluetooth
 
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -75,6 +78,7 @@ class MainActivity : ComponentActivity() {
         remoteConfig.fetchAndActivate()
         super.onCreate(savedInstanceState)
 
+        // Requests perms
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.BLUETOOTH_CONNECT
@@ -95,6 +99,12 @@ class MainActivity : ComponentActivity() {
             )
         }
 
+        bluetoothAdapter = lazy {
+            val bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+            bluetoothManager.adapter
+        }.value
+        bluetooth = Bluetooth(bluetoothAdapter)
+
         setContent {
             AppTheme {
                 // A surface container using the 'background' color from the theme
@@ -103,15 +113,13 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     Greeting(
-                        ":3",
-                        discoverer = this::startDiscover,
-                        discoveree = this::makeDiscoverable,
-                        endDiscover = this::endDiscover,
-                        acceptThread = AcceptThread(),
-                        warren = {
-                            val warrenPhone = bluetoothAdapter.getRemoteDevice("30:74:67:52:97:D8")
-
-                        }
+                        server = {
+                            bluetooth.startServer { Log.d("diskut", "server started") }
+                        },
+                        client = {
+                            bluetooth.startClient { Log.d("diskut", "client started") }
+                        },
+                        bluetooth = bluetooth
                     )
                 }
             }
@@ -140,136 +148,72 @@ class MainActivity : ComponentActivity() {
             else -> {}
         }
     }
-
-    fun startDiscover() {
-        if (bluetoothAdapter.isDiscovering) endDiscover()
-        bluetoothAdapter.startDiscovery()
-    }
-
-    fun endDiscover() {
-        bluetoothAdapter.cancelDiscovery()
-    }
-
-    fun makeDiscoverable() {
-        val requestCode = 1;
-        val discoverableIntent: Intent =
-            Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE).apply {
-                putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300)
-            }
-        startActivityForResult(discoverableIntent, requestCode)
-    }
-
-    inner class AcceptThread : Thread() {
-
-        private val mmServerSocket: BluetoothServerSocket? by lazy(LazyThreadSafetyMode.NONE) {
-            bluetoothAdapter?.listenUsingRfcommWithServiceRecord("duskit", uuid)
-        }
-
-        override fun run() {
-            // Keep listening until exception occurs or a socket is returned.
-            var shouldLoop = true
-            while (shouldLoop) {
-                val socket: BluetoothSocket? = try {
-                    mmServerSocket?.accept()
-                } catch (e: IOException) {
-                    Log.e("duskit", "Socket's accept() method failed", e)
-                    shouldLoop = false
-                    null
-                }
-                socket?.also {
-                    handleSocket(socket)
-                    Log.i("duskit", "socket: $it")
-                    mmServerSocket?.close()
-                    shouldLoop = false
-                }
-            }
-        }
-
-        // Closes the connect socket and causes the thread to finish.
-        fun cancel() {
-            try {
-                mmServerSocket?.close()
-            } catch (e: IOException) {
-                Log.e("duskit", "Could not close the connect socket", e)
-            }
-        }
-    }
-
-    fun handleSocket(socket: BluetoothSocket) {
-
-    }
-
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Greeting(
-    name: String,
     modifier: Modifier = Modifier,
-    discoverer: () -> Unit,
-    discoveree: () -> Unit,
-    endDiscover: () -> Unit,
-    acceptThread: MainActivity.AcceptThread,
-    warren: () -> Unit
+    server: () -> Unit,
+    client: () -> Unit,
+    bluetooth: Bluetooth,
 ) {
+    val context = LocalContext.current
+
+    var text by remember { mutableStateOf("Hello") }
+    var meow by remember { mutableStateOf(ByteArray(1024)) }
+
     Column(
         verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = "Hello $name!",
+            text = ":3",
             modifier = modifier
         )
         Row(
             horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Row {
-                Button(
-                    onClick = discoverer
-                ) {
-                    Text("start discovery")
-                }
-            }
-            Row {
-                Button(
-                    onClick = endDiscover
-                ) {
-                    Text("end discovery")
-                }
-            }
-        }
-        Button(
-            onClick = discoveree
-        ) {
-            Text("be discovered")
-        }
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
             Button(
-                onClick = { acceptThread.start() }
+                onClick = {
+                    Toast.makeText(context, "Server", Toast.LENGTH_SHORT).show()
+                    server()
+                }
             ) {
-                Text("open socket")
+                Text("server")
             }
             Button(
-                onClick = { acceptThread.cancel() }
+                onClick = {
+                    Toast.makeText(context, "Client", Toast.LENGTH_SHORT).show()
+                    client()
+                }
             ) {
-                Text("close socket")
+                Text("client")
             }
         }
+        TextField(
+            value = text,
+            onValueChange = { text = it },
+            label = { Text("Label") }
+        )
         Button(
-            onClick = warren
+            onClick = {
+                Log.i("diskut", "send clicked: $text")
+                bluetooth.send(text.toByteArray())
+            }
         ) {
-            Text("connect to warren")
+            Text("send")
+        }
+        Button(
+            onClick = {
+                Log.i("diskut", "receive clicked")
+                bluetooth.receive(meow)
+                Log.i("diskut", meow.decodeToString())
+                Toast.makeText(context, meow.decodeToString().substringBefore('\u0000'), Toast.LENGTH_SHORT).show()
+            }
+        ) {
+            Text("receive")
         }
     }
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun GreetingPreview() {
-//    DiskutTheme {
-//        Greeting("Android")
-//    }
-//}
