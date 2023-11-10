@@ -23,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -36,12 +37,14 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.diskut.Bluetooth
 import com.example.diskut.Controller.GenerateConversationCues
+import com.example.diskut.Controller.PointIncrement
 import com.example.diskut.MainActivity
 import com.example.diskut.Model.User
 import com.example.diskut.Model.UserType
 import com.example.diskut.ui.theme.AppTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 val yueheng = User("h2010157@nushigh.edu.sg", "Wong Yue Heng", UserType.STUDENT, "Year 4", 0)
@@ -63,12 +66,9 @@ fun MainPage(goalPoints: Int, bluetooth: Bluetooth) {
     yueheng.addInterest("Gardening")
     warren.addInterest("Landscaping")
     var expanded by remember { mutableStateOf(false) }
-    var currPoints by remember { mutableStateOf(270) }
     val conversationCues = remember { mutableStateListOf("Before the list is filled") }
 
     var peerUser by remember { mutableStateOf(User("", "", UserType.STAFF, "", 0)) }
-
-    val interactionSource = remember { MutableInteractionSource() }
 
     val currUser = if (bluetooth.adapter.name == "Jing's A12") {
         warren
@@ -76,10 +76,15 @@ fun MainPage(goalPoints: Int, bluetooth: Bluetooth) {
         yueheng
     }
 
+    val currPoints = remember { mutableStateOf(currUser.points) }
+
+
+    PointIncrement(expanded = expanded, currPoints = currPoints)
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .clickable(interactionSource = interactionSource, indication = null) {
+            .clickable() {
                 val peer = ByteArray(1024)
 
                 if (bluetooth.adapter.name == "Jing's A12") {
@@ -128,7 +133,7 @@ fun MainPage(goalPoints: Int, bluetooth: Bluetooth) {
             AnimatedPointsIndicator(
                 modifier = Modifier.weight(0.1f),
                 username = currUser.name,
-                currPoints = currUser.points,
+                currPoints = currPoints.value,
                 goalPoints = goalPoints,
                 expanded = expanded
             )
@@ -145,7 +150,10 @@ fun MainPage(goalPoints: Int, bluetooth: Bluetooth) {
                 modifier = Modifier.weight(0.1f),
                 username = peerUser.name,
                 occupation = "${peerUser.type} - ${peerUser.value}",
-                expanded = expanded
+                expanded = expanded,
+                onClick = {
+                    expanded = false
+                }
             )
 
         }

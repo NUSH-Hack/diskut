@@ -1,5 +1,6 @@
 package com.example.diskut.View.MainPage
 
+import android.widget.ImageButton
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
@@ -8,6 +9,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,6 +39,7 @@ internal fun AnimatedPeerDetails(
     username: String,
     occupation: String,
     expanded: Boolean,
+    onClick: () -> Unit
 ) {
     val density = LocalDensity.current
 
@@ -49,7 +52,7 @@ internal fun AnimatedPeerDetails(
         ),
         exit = slideOutVertically() + shrinkVertically() + fadeOut()
     ) {
-        PeerDetails(modifier = modifier, username = username, occupation = occupation)
+        PeerDetails(modifier = modifier, username = username, occupation = occupation, onClick = onClick)
     }
 
 }
@@ -59,6 +62,7 @@ internal fun PeerDetails(
     modifier: Modifier = Modifier,
     username: String,
     occupation: String,
+    onClick: () -> Unit
 ) {
     Row (modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically) {
         Column (horizontalAlignment = Alignment.End) {
@@ -82,7 +86,10 @@ internal fun PeerDetails(
             modifier = Modifier
                 .height(48.dp)
                 .aspectRatio(1f)
-                .clip(CircleShape),
+                .clip(CircleShape)
+                .clickable {
+                    onClick()
+                },
             painter = painterResource(id = R.drawable.anon),
             contentScale = ContentScale.Crop,
             contentDescription = null
