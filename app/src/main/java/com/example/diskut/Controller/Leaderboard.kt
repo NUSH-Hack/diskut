@@ -1,6 +1,7 @@
 package com.example.diskut.Controller
 
 import com.example.diskut.User
+import com.example.diskut.UserType
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import org.json.JSONArray
@@ -14,9 +15,9 @@ fun FetchLeaderboard(): ArrayList<User> {
         leaderboardJson = JSONArray(it.toString())
     }.addOnFailureListener {
         leaderboardJson = JSONArray()
-            .put(User("", "Prannaya", 6, 1000).serialize())
-            .put(User("", "Warren", 4, 600).serialize())
-            .put(User("", "Meow", 1, 2).serialize())
+            .put(User("", "Prannaya", UserType.STUDENT,"Year 6", 1000).serialize())
+            .put(User("", "Warren", UserType.STUDENT, "Year 4", 600).serialize())
+            .put(User("", "Mr. Meow", UserType.TEACHER, "Chemistry Department", 2).serialize())
     }
 
     val leaderboard: ArrayList<User> = arrayListOf()

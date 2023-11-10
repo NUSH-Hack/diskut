@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import com.example.diskut.Controller.FetchLeaderboard
 import com.example.diskut.User
 import com.example.diskut.ui.theme.AppTheme
+import com.example.diskut.UserType
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import org.json.JSONArray

@@ -8,7 +8,8 @@ import kotlinx.serialization.json.Json
 class User (
     val email: String,
     val name: String,
-    val year: Int,
+    val type: UserType,
+    val value: String, // Year if Student, Department if Teacher, Job if Staff
     val points: Int
 ) {
     val majors: ArrayList<String> = arrayListOf()
@@ -28,18 +29,19 @@ class User (
     }
 
     fun findCommonMajor(other: User): Set<String> {
-        return other.majors.intersect(majors)
+        return other.majors.intersect(majors.toSet())
     }
 
     fun findCommonTeacher(other: User): Set<String> {
-        return other.teachers.intersect(teachers)
+        return other.teachers.intersect(teachers.toSet())
     }
 
     fun serialize(): ByteArray {
         // TODO: Chnage this to whatever is needed for Bluetooth communication
         return Json.encodeToString(this).toByteArray()
     }
+}
 
-
-
+enum class UserType {
+    STUDENT, TEACHER, STAFF
 }
