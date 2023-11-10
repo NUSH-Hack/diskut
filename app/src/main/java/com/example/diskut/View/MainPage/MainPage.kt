@@ -38,7 +38,10 @@ import com.example.diskut.MainActivity
 import com.example.diskut.Model.User
 import com.example.diskut.Model.UserType
 import com.example.diskut.ui.theme.AppTheme
-import com.example.diskut.user
+
+val yueheng = User("h2010157@nushigh.edu.sg", "Wong Yue Heng", UserType.STUDENT, "Year 4", 0)
+val warren = User("h2230006@nushigh.edu.sg", "Warren Zhou", UserType.STUDENT, "Year 4", 10)
+
 
 @Composable
 fun MainPage(goalPoints: Int, bluetooth: Bluetooth) {
@@ -49,6 +52,12 @@ fun MainPage(goalPoints: Int, bluetooth: Bluetooth) {
 
     val interactionSource = remember { MutableInteractionSource() }
 
+    val currUser = if (bluetooth.adapter.name == "Jing's A12") {
+        warren
+    } else {
+        yueheng
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -57,7 +66,7 @@ fun MainPage(goalPoints: Int, bluetooth: Bluetooth) {
                     Log.i("diskut", "warren")
                     bluetooth.startServer {
                         Log.i("diskut", "connection established")
-                        bluetooth.send(user.serialize())
+                        bluetooth.send(currUser.serialize())
                         val peer = ByteArray(1024)
                         bluetooth.receive(peer)
                         peerUser = User.deserialize(peer)
@@ -67,7 +76,7 @@ fun MainPage(goalPoints: Int, bluetooth: Bluetooth) {
                     Log.i("diskut", "not warren")
                     bluetooth.startClient {
                         Log.i("diskut", "connection established")
-                        bluetooth.send(user.serialize())
+                        bluetooth.send(currUser.serialize())
                         val peer = ByteArray(1024)
                         bluetooth.receive(peer)
                         peerUser = User.deserialize(peer)
@@ -85,8 +94,8 @@ fun MainPage(goalPoints: Int, bluetooth: Bluetooth) {
         ) {
             AnimatedPointsIndicator(
                 modifier = Modifier.weight(0.1f),
-                username = "Larry",
-                currPoints = currPoints,
+                username = currUser.name,
+                currPoints = currUser.points,
                 goalPoints = goalPoints,
                 expanded = expanded
             )

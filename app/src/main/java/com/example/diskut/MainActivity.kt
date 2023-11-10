@@ -53,8 +53,6 @@ import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
 
-val user = User("h2010138@nushigh.edu.sg", "Tan Junheng", UserType.STUDENT, "Year 4", 0)
-
 val test_users: List<User> = listOf(
     User("", "Prannaya", UserType.STUDENT,"Year 6", 1000),
     User("", "Warren", UserType.STUDENT, "Year 4", 600),
