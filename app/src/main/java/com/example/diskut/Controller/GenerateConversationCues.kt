@@ -1,5 +1,6 @@
 package com.example.diskut.Controller
 
+import android.util.Log
 import com.example.diskut.Model.User
 
 suspend fun GenerateConversationCues(peerUser: User, currUser: User): List<String> {

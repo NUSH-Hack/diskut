@@ -56,7 +56,7 @@ class User (
                         embeddings!!.getEmbedding(myInterest),
                         embeddings!!.getEmbedding(otherInterest)
                     )
-                    InterestSimilarityPair(myInterest, otherInterest, similarity)
+                    similarities.add(InterestSimilarityPair(myInterest, otherInterest, similarity))
                 }
             }
         }
