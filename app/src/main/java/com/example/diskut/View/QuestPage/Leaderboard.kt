@@ -12,6 +12,7 @@ import com.example.diskut.ui.theme.AppTheme
 
 import androidx.compose.foundation.lazy.items
 import com.example.diskut.User
+import com.example.diskut.UserType
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.get
 import com.google.firebase.remoteconfig.ktx.remoteConfig
@@ -31,9 +32,9 @@ internal fun Leaderboard() {
         leaderboardJson = JSONArray(it.toString())
     }.addOnFailureListener {
         leaderboardJson = JSONArray()
-            .put(User("", "Prannaya", 6, 1000).serialize())
-            .put(User("", "Warren", 4, 600).serialize())
-            .put(User("", "Meow", 1, 2).serialize())
+            .put(User("", "Prannaya", UserType.STUDENT,"Year 6", 1000).serialize())
+            .put(User("", "Warren", UserType.STUDENT, "Year 4", 600).serialize())
+            .put(User("", "Mr. Meow", UserType.TEACHER, "Chemistry Department", 2).serialize())
     }
     val leaderboard: ArrayList<User> = arrayListOf()
     for (i in 0..2) {
