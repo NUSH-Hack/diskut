@@ -5,12 +5,12 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothServerSocket
+import android.bluetooth.BluetoothSocket
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.nfc.NfcAdapter
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -34,7 +34,9 @@ import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
-import com.example.diskut.ui.theme.DiskutTheme
+import com.example.diskut.ui.theme.AppTheme
+import java.io.IOException
+
 import java.util.UUID
 
 class MainActivity : ComponentActivity() {
@@ -44,7 +46,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private lateinit var socket: BluetoothServerSocket
-    private val uuid = UUID.randomUUID()
+    private val uuid = UUID.fromString("317a9c6e-90d1-418b-afa4-b5866a52bb5c")
 
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -89,13 +91,15 @@ class MainActivity : ComponentActivity() {
                     Manifest.permission.BLUETOOTH_ADMIN,
                     Manifest.permission.ACCESS_COARSE_LOCATION,
                     Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.BLUETOOTH_CONNECT,
+                    Manifest.permission.BLUETOOTH_SCAN,
                 ),
                 1337
             )
         }
 
         setContent {
-            DiskutTheme {
+            AppTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -106,6 +110,11 @@ class MainActivity : ComponentActivity() {
                         discoverer = this::startDiscover,
                         discoveree = this::makeDiscoverable,
                         endDiscover = this::endDiscover,
+                        acceptThread = AcceptThread(),
+                        warren = {
+                            val warrenPhone = bluetoothAdapter.getRemoteDevice("30:74:67:52:97:D8")
+
+                        }
                     )
                 }
             }
@@ -152,6 +161,47 @@ class MainActivity : ComponentActivity() {
             }
         startActivityForResult(discoverableIntent, requestCode)
     }
+
+    inner class AcceptThread : Thread() {
+
+        private val mmServerSocket: BluetoothServerSocket? by lazy(LazyThreadSafetyMode.NONE) {
+            bluetoothAdapter?.listenUsingRfcommWithServiceRecord("duskit", uuid)
+        }
+
+        override fun run() {
+            // Keep listening until exception occurs or a socket is returned.
+            var shouldLoop = true
+            while (shouldLoop) {
+                val socket: BluetoothSocket? = try {
+                    mmServerSocket?.accept()
+                } catch (e: IOException) {
+                    Log.e("duskit", "Socket's accept() method failed", e)
+                    shouldLoop = false
+                    null
+                }
+                socket?.also {
+                    handleSocket(socket)
+                    Log.i("duskit", "socket: $it")
+                    mmServerSocket?.close()
+                    shouldLoop = false
+                }
+            }
+        }
+
+        // Closes the connect socket and causes the thread to finish.
+        fun cancel() {
+            try {
+                mmServerSocket?.close()
+            } catch (e: IOException) {
+                Log.e("duskit", "Could not close the connect socket", e)
+            }
+        }
+    }
+
+    fun handleSocket(socket: BluetoothSocket) {
+
+    }
+
 }
 
 @Composable
@@ -160,7 +210,9 @@ fun Greeting(
     modifier: Modifier = Modifier,
     discoverer: () -> Unit,
     discoveree: () -> Unit,
-    endDiscover: () -> Unit
+    endDiscover: () -> Unit,
+    acceptThread: MainActivity.AcceptThread,
+    warren: () -> Unit
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterVertically),
@@ -193,6 +245,26 @@ fun Greeting(
             onClick = discoveree
         ) {
             Text("be discovered")
+        }
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Button(
+                onClick = { acceptThread.start() }
+            ) {
+                Text("open socket")
+            }
+            Button(
+                onClick = { acceptThread.cancel() }
+            ) {
+                Text("close socket")
+            }
+        }
+        Button(
+            onClick = warren
+        ) {
+            Text("connect to warren")
         }
     }
 }
