@@ -26,17 +26,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import com.example.diskut.ui.theme.AppTheme
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
-import androidx.compose.ui.unit.dp
-import androidx.core.app.ActivityCompat
-import com.example.diskut.ui.theme.AppTheme
 import java.io.IOException
-
 import java.util.UUID
 
 class MainActivity : ComponentActivity() {
