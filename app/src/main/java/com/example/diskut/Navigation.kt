@@ -8,6 +8,10 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -29,21 +33,25 @@ fun NavigationHost(navController: NavHostController) {
 
 @Composable
 fun MyNavigationBar(navController: NavController) {
+    var selected by rememberSaveable {mutableStateOf(0)}
+
     NavigationBar {
         NavigationBarItem(
             icon = { Icon(Icons.Filled.Home, contentDescription = "Main") },
             label = { Text("Main") },
-            selected = true, // you should control this based on navController's current route
+            selected = selected == 0, // you should control this based on navController's current route
             onClick = {
                 navController.navigate("main")
+                selected = 0
             }
         )
         NavigationBarItem(
             icon = { Icon(Icons.Filled.Face, contentDescription = "Quest") },
             label = { Text("Quest") },
-            selected = false, // you should control this based on navController's current route
+            selected = selected == 1, // you should control this based on navController's current route
             onClick = {
                 navController.navigate("quest")
+                selected = 1
             }
         )
     }
