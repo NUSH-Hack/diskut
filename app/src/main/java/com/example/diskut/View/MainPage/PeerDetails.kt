@@ -1,5 +1,12 @@
 package com.example.diskut.View.MainPage
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,11 +24,35 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.diskut.R
+
+@Composable
+internal fun AnimatedPeerDetails(
+    modifier: Modifier = Modifier,
+    username: String,
+    occupation: String,
+    expanded: Boolean,
+) {
+    val density = LocalDensity.current
+
+    AnimatedVisibility(
+        visible = expanded,
+        enter = slideInHorizontally {
+            with(density) { 8.dp.roundToPx() }
+        } + fadeIn(
+            initialAlpha = 0.3f
+        ),
+        exit = slideOutVertically() + shrinkVertically() + fadeOut()
+    ) {
+        PeerDetails(modifier = modifier, username = username, occupation = occupation)
+    }
+
+}
 
 @Composable
 internal fun PeerDetails(

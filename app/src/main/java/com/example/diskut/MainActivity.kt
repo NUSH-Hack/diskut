@@ -36,10 +36,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.navigation.compose.rememberNavController
+import com.example.diskut.Controller.fetchLeaderboard
+import com.example.diskut.Controller.uploadLeaderboard
 import com.example.diskut.Model.User
 import com.example.diskut.Model.UserType
 import com.example.diskut.View.QuestPage.Quest
 import com.example.diskut.ui.theme.AppTheme
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.get
+import com.google.firebase.remoteconfig.remoteConfig
+import com.google.firebase.remoteconfig.remoteConfigSettings
+import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.json.JSONArray
+import org.json.JSONObject
 
 val test_users: List<User> = listOf(
     User("", "Prannaya", UserType.STUDENT,"Year 6", 1000),
@@ -77,6 +89,16 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val remoteConfig = com.google.firebase.Firebase.remoteConfig
+        val configSettings = remoteConfigSettings {
+            minimumFetchIntervalInSeconds = 3600
+        }
+        remoteConfig.setConfigSettingsAsync(configSettings)
+        remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
+        remoteConfig.fetchAndActivate()
+        CoroutineScope(Dispatchers.IO).launch() {
+            uploadLeaderboard(fetchLeaderboard())
+        }
 
         // Requests perms
         if (ActivityCompat.checkSelfPermission(

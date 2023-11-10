@@ -18,18 +18,18 @@ import org.json.JSONObject
 
 @Composable
 internal fun QuestList(questList: List<Quest>) {
-//    val remoteConfig = Firebase.remoteConfig
-//    val questJson = remoteConfig["global_quest"].asString()
-//    val json = JSONObject(questJson)
+    val remoteConfig = Firebase.remoteConfig
+    val questJson = remoteConfig["global_quest"].asString()
+    val json = JSONObject(questJson)
 
     val questList = remember { mutableStateListOf<Quest>() }
 
-    //
-    //    questList.add(Quest(
-    //        json.getString("Description"),
-    //        json.getInt("Completed"),
-    //        json.getInt("Goal"),
-    //    ))
+
+        questList.add(Quest(
+            json.getString("Description"),
+            json.getInt("Completed"),
+            json.getInt("Goal"),
+        ))
 
     questList.addAll(test_quest)
 
