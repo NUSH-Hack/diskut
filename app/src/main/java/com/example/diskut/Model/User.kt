@@ -44,15 +44,20 @@ class User (
     }
 
     suspend fun findCommonInterests(other: User): ArrayList<InterestSimilarityPair> {
-        lateinit var embeddings: GloVe.GloVeEmbeddings
+        var embeddings : GloVe.GloVeEmbeddings? = null
         GloVe.loadEmbeddings {
             embeddings = it
-        }
+        }.join()
         val similarities: ArrayList<InterestSimilarityPair> = arrayListOf()
         interests.forEach { myInterest ->
             other.interests.forEach {otherInterest ->
-                val similarity = GloVe.compare(embeddings.getEmbedding(myInterest), embeddings.getEmbedding(otherInterest))
-                InterestSimilarityPair(myInterest, otherInterest, similarity)
+                if (embeddings != null) {
+                    val similarity = GloVe.compare(
+                        embeddings!!.getEmbedding(myInterest),
+                        embeddings!!.getEmbedding(otherInterest)
+                    )
+                    InterestSimilarityPair(myInterest, otherInterest, similarity)
+                }
             }
         }
         similarities.sortBy { it.similarity }
