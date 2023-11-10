@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "150397330321",
+    "project_id": "diskut-126f4",
+    "storage_bucket": "diskut-126f4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:150397330321:android:f594803824d7d93a31b030",
+        "android_client_info": {
+          "package_name": "com.example.diskut"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8LYZgBu6dJnYOMbPZxP4BBnaromndot0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
