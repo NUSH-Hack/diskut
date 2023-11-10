@@ -28,7 +28,6 @@ class Bluetooth(val adapter: BluetoothAdapter) {
         private lateinit var bluetoothSocket: BluetoothSocket
 
         override fun run() {
-            Log.i("diskut", "run 2")
             // Keep listening until exception occurs or a socket is returned.
             var shouldLoop = true
             while (shouldLoop) {
@@ -39,7 +38,6 @@ class Bluetooth(val adapter: BluetoothAdapter) {
                     shouldLoop = false
                     null
                 }
-                Log.i("diskut", "meow server")
                 socket?.also {
                     bluetoothSocket = it
                     runOnAccept(it)
@@ -59,10 +57,7 @@ class Bluetooth(val adapter: BluetoothAdapter) {
         }
 
         fun receive(bytes: ByteArray) {
-            Log.i("diskut", "server receive")
-            Log.i("diskut", "${bluetoothSocket.inputStream.available()}")
-            Log.i("diskut", bluetoothSocket.inputStream.read(bytes).toString())
-            Log.i("diskut", bytes.decodeToString())
+            bluetoothSocket.inputStream.read(bytes)
         }
 
         fun send(bytes: ByteArray) {
@@ -88,8 +83,6 @@ class Bluetooth(val adapter: BluetoothAdapter) {
             adapter.cancelDiscovery()
 
             socket?.let { socket ->
-                Log.i("diskut", "meow")
-
                 // Connect to the remote device through the socket. This call blocks
                 // until it succeeds or throws an exception.
                 socket.connect()
@@ -110,7 +103,7 @@ class Bluetooth(val adapter: BluetoothAdapter) {
         }
 
         fun receive(bytes: ByteArray) {
-            Log.i("diskut", "client receive")
+            Log.i("diskut", socket!!.inputStream.available().toString())
             socket!!.inputStream.read(bytes)
         }
 
@@ -158,11 +151,10 @@ class Bluetooth(val adapter: BluetoothAdapter) {
     }
 
     fun receive(bytes: ByteArray) {
-        Log.i("diskut", "receive called in bluetooth")
         when (mode) {
             CLIENT -> client.receive(bytes)
             SERVER -> server.receive(bytes)
         }
-        Log.i("diskut", bytes.decodeToString().substringBefore('\u0000'))
+        Log.i("diskut", bytes.decodeToString().trim { it < ' ' })
     }
 }
