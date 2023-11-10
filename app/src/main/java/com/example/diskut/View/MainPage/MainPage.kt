@@ -36,7 +36,7 @@ import com.example.diskut.ui.theme.AppTheme
 
 @Composable
 fun MainPage(goalPoints: Int) {
-    var expanded by remember { mutableStateOf(true) }
+    var expanded by remember { mutableStateOf(false) }
     var currPoints by remember { mutableStateOf(270) }
 
     val interactionSource = remember { MutableInteractionSource() }
