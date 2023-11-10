@@ -31,6 +31,10 @@ class User (
         teachers.add(teacher)
     }
 
+    fun addInterest(interest: String) {
+        interests.add(interest)
+    }
+
     fun findCommonMajor(other: User): Set<String> {
         return other.majors.intersect(majors.toSet())
     }

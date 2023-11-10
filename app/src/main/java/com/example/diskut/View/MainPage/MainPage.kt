@@ -50,6 +50,18 @@ val warren = User("h2230006@nushigh.edu.sg", "Warren Zhou", UserType.STUDENT, "Y
 
 @Composable
 fun MainPage(goalPoints: Int, bluetooth: Bluetooth) {
+    yueheng.addMajor("Math")
+    yueheng.addMajor("Chemistry")
+    yueheng.addMajor("Computer Science")
+    warren.addMajor("Math")
+    warren.addMajor("Physics")
+    warren.addMajor("Computer Science")
+    yueheng.addTeacher("Lim Chong Shen")
+    yueheng.addTeacher("Claude Chua")
+    warren.addTeacher("Tan Guan Seng")
+    warren.addTeacher("Claude Chua")
+    yueheng.addInterest("Gardening")
+    warren.addInterest("Landscaping")
     var expanded by remember { mutableStateOf(false) }
     var currPoints by remember { mutableStateOf(270) }
     val conversationCues = remember { mutableStateListOf("Before the list is filled") }
