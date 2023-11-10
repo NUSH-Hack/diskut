@@ -6,31 +6,31 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import org.json.JSONArray
 
-fun FetchLeaderboard(): List<User> {
-    val storage = Firebase.storage
-    var storageRef = storage.reference
-
-    lateinit var leaderboardJson: JSONArray
-    storageRef.child("leaderboard.json").getBytes(1024 * 1024).addOnSuccessListener {
-        leaderboardJson = JSONArray(it.toString())
-    }.addOnFailureListener {
-        leaderboardJson = JSONArray()
-            .put(User("", "Prannaya", UserType.STUDENT,"Year 6", 1000).serialize())
-            .put(User("", "Warren", UserType.STUDENT, "Year 4", 600).serialize())
-            .put(User("", "Mr. Meow", UserType.TEACHER, "Chemistry Department", 2).serialize())
-    }
-
-    val leaderboard: MutableList<User> = mutableListOf()
-    for (i in 0..2) {
-        leaderboard.add(User.deserialize(leaderboardJson.getString(i).toByteArray()))
-    }
-
-    //    leaderboard.add() TODO: add the current user here
-    leaderboard.sortBy { it.points }
-    leaderboard.reverse() // leaderboard is now 1st, then 2nd, then 3rd
-
-    return leaderboard
-}
+//fun FetchLeaderboard(): List<User> {
+//    val storage = Firebase.storage
+//    var storageRef = storage.reference
+//
+//    lateinit var leaderboardJson: JSONArray
+//    storageRef.child("leaderboard.json").getBytes(1024 * 1024).addOnSuccessListener {
+//        leaderboardJson = JSONArray(it.toString())
+//    }.addOnFailureListener {
+//        leaderboardJson = JSONArray()
+//            .put(User("", "Prannaya", UserType.STUDENT,"Year 6", 1000).serialize())
+//            .put(User("", "Warren", UserType.STUDENT, "Year 4", 600).serialize())
+//            .put(User("", "Mr. Meow", UserType.TEACHER, "Chemistry Department", 2).serialize())
+//    }
+//
+//    val leaderboard: MutableList<User> = mutableListOf()
+//    for (i in 0..2) {
+////        leaderboard.add(User.deaserialize(leaderboardJson.getString(i).toByteArray()))
+//    }
+//
+//    //    leaderboard.add() TODO: add the current user here
+//    leaderboard.sortBy { it.points }
+//    leaderboard.reverse() // leaderboard is now 1st, then 2nd, then 3rd
+//
+//    return leaderboard
+//}
 
 fun uploadLeaderboard(leaderboard: ArrayList<User>) {
     // Upload leaderboard
