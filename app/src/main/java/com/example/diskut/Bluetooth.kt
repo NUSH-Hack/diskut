@@ -25,7 +25,7 @@ class Bluetooth(val adapter: BluetoothAdapter) {
             adapter.listenUsingRfcommWithServiceRecord("diskut", uuid)
         }
 
-        private lateinit var bluetoothSocket: BluetoothSocket
+        lateinit var bluetoothSocket: BluetoothSocket
 
         override fun run() {
             // Keep listening until exception occurs or a socket is returned.
@@ -50,7 +50,8 @@ class Bluetooth(val adapter: BluetoothAdapter) {
         // Closes the connect socket and causes the thread to finish.
         fun cancel() {
             try {
-                socket?.close()
+                Log.i("diskut", bluetoothSocket.toString())
+                bluetoothSocket.close()
             } catch (e: IOException) {
                 Log.e("diskut", "Could not close the connect socket", e)
             }
@@ -70,8 +71,7 @@ class Bluetooth(val adapter: BluetoothAdapter) {
     }
 
     private inner class Client(val runOnConnect: (BluetoothSocket) -> Unit) : Thread() {
-
-        private val socket: BluetoothSocket? by lazy(LazyThreadSafetyMode.NONE) {
+        val socket: BluetoothSocket? by lazy(LazyThreadSafetyMode.NONE) {
             adapter
                 .getRemoteDevice(warrenMAC)
                 .createRfcommSocketToServiceRecord(uuid)
@@ -96,6 +96,7 @@ class Bluetooth(val adapter: BluetoothAdapter) {
         // Closes the client socket and causes the thread to finish.
         fun cancel() {
             try {
+                Log.i("diskut", socket.toString())
                 socket?.close()
             } catch (e: IOException) {
                 Log.e("diskut", "Could not close the client socket", e)
@@ -135,11 +136,12 @@ class Bluetooth(val adapter: BluetoothAdapter) {
     }
 
 
-    fun stop() {
+    fun stop(onStop: () -> Unit = {}) {
         when (mode) {
             CLIENT -> client.cancel()
             SERVER -> server.cancel()
         }
+        onStop()
         mode = null
     }
 
@@ -157,4 +159,21 @@ class Bluetooth(val adapter: BluetoothAdapter) {
         }
         Log.i("diskut", bytes.decodeToString().trim { it < ' ' })
     }
+
+    fun active(): Boolean {
+        return when (mode) {
+            CLIENT -> client.socket!!.isConnected
+            SERVER -> server.bluetoothSocket.isConnected
+            else -> false
+        }
+    }
+
+//    fun alertAndClose() {
+//        val STOP = byteArrayOf('\u1337'.code.toByte())
+//        when (mode) {
+//            CLIENT -> client.send(STOP)
+//            SERVER -> server.send(STOP)
+//        }
+//        stop()
+//    }
 }

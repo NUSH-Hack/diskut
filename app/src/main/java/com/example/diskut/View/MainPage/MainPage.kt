@@ -1,29 +1,19 @@
 package com.example.diskut.View.MainPage
 
-import android.content.res.Configuration
+import android.bluetooth.BluetoothAdapter
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandHorizontally
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -31,21 +21,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.diskut.Bluetooth
 import com.example.diskut.Controller.GenerateConversationCues
 import com.example.diskut.Controller.PointIncrement
-import com.example.diskut.MainActivity
 import com.example.diskut.Model.User
 import com.example.diskut.Model.UserType
-import com.example.diskut.ui.theme.AppTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
 
 val yueheng = User("h2010157@nushigh.edu.sg", "Wong Yue Heng", UserType.STUDENT, "Year 4", 0)
 val warren = User("h2230006@nushigh.edu.sg", "Warren Zhou", UserType.STUDENT, "Year 4", 10)
@@ -78,6 +65,20 @@ fun MainPage(goalPoints: Int, bluetooth: Bluetooth) {
 
     val currPoints = remember { mutableStateOf(currUser.points) }
 
+    val filter = IntentFilter()
+    filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED)
+
+    val bluetoothTurnedOnOff = object : BroadcastReceiver() {
+        override fun onReceive(contxt: Context?, intent: Intent?) {
+            Log.i("diskut", "state changed !!")
+            if (intent?.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1) == BluetoothAdapter.STATE_OFF) {
+                expanded = false
+                bluetooth.stop()
+            }
+        }
+    }
+
+    LocalContext.current.registerReceiver(bluetoothTurnedOnOff, filter)
 
     PointIncrement(expanded = expanded, currPoints = currPoints)
 
@@ -102,7 +103,19 @@ fun MainPage(goalPoints: Int, bluetooth: Bluetooth) {
                         CoroutineScope(Dispatchers.Main).launch {
                             conversationCues.addAll(GenerateConversationCues(peerUser, currUser))
                         }
-
+                        CoroutineScope(Dispatchers.IO).launch {
+                            while (true) {
+                                Log.i("diskut",
+                                    bluetooth
+                                        .active()
+                                        .toString()
+                                )
+                                if (!bluetooth.active()) {
+                                    expanded = false
+                                }
+                                delay(1000)
+                            }
+                        }
                     }
                 } else {
                     Log.i("diskut", "not warren")
@@ -118,6 +131,19 @@ fun MainPage(goalPoints: Int, bluetooth: Bluetooth) {
                         conversationCues.clear()
                         CoroutineScope(Dispatchers.Main).launch {
                             conversationCues.addAll(GenerateConversationCues(peerUser, currUser))
+                        }
+                        CoroutineScope(Dispatchers.IO).launch {
+                            while (true) {
+                                Log.i("diskut",
+                                    bluetooth
+                                        .active()
+                                        .toString()
+                                )
+                                if (!bluetooth.active()) {
+                                    expanded = false
+                                }
+                                delay(1000)
+                            }
                         }
                     }
                 }
@@ -152,7 +178,8 @@ fun MainPage(goalPoints: Int, bluetooth: Bluetooth) {
                 occupation = "${peerUser.type} - ${peerUser.value}",
                 expanded = expanded,
                 onClick = {
-                    expanded = false
+//                    expanded = false
+                    bluetooth.stop()
                 }
             )
 
