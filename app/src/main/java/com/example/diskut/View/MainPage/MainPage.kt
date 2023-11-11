@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.media.MediaPlayer
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -28,6 +29,7 @@ import com.example.diskut.Controller.GenerateConversationCues
 import com.example.diskut.Controller.PointIncrement
 import com.example.diskut.Model.User
 import com.example.diskut.Model.UserType
+import com.example.diskut.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -79,7 +81,7 @@ fun MainPage(goalPoints: Int, bluetooth: Bluetooth) {
     }
 
     LocalContext.current.registerReceiver(bluetoothTurnedOnOff, filter)
-
+    val mPlayerHappy = MediaPlayer.create(LocalContext.current, R.raw.happy)
     PointIncrement(expanded = expanded, currPoints = currPoints)
 
     Box(
@@ -98,6 +100,7 @@ fun MainPage(goalPoints: Int, bluetooth: Bluetooth) {
                         peerUser = User.deserialize(peer)
 
                         expanded = !expanded
+                        mPlayerHappy.start()
 
                         conversationCues.clear()
                         CoroutineScope(Dispatchers.Main).launch {
@@ -127,6 +130,7 @@ fun MainPage(goalPoints: Int, bluetooth: Bluetooth) {
                         peerUser = User.deserialize(peer)
 
                         expanded = !expanded
+                        mPlayerHappy.start()
 
                         conversationCues.clear()
                         CoroutineScope(Dispatchers.Main).launch {
