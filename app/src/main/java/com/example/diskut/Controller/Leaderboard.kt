@@ -3,6 +3,8 @@ package com.example.diskut.Controller
 import android.util.Log
 import com.example.diskut.Model.User
 import com.example.diskut.Model.UserType
+import com.example.diskut.View.MainPage.warren
+import com.example.diskut.View.MainPage.yueheng
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.tasks.await
@@ -29,8 +31,8 @@ suspend fun fetchLeaderboard(): List<User> {
         for (i in 0..2) {
             leaderboard.add(User.deserialize(leaderboardJson.getString(i).toByteArray()))
         }
-
-        //    leaderboard.add() TODO: add the current user here
+        leaderboard.add(warren)
+        leaderboard.add(yueheng)
         leaderboard.sortBy { it.points }
         leaderboard.reverse() // leaderboard is now 1st, then 2nd, then 3rd
         return@continueWith leaderboard.toList()
