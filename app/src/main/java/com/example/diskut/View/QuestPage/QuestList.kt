@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
@@ -38,8 +39,14 @@ internal fun QuestList(questList: List<Quest>) {
         state = rememberLazyListState(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(questList, itemContent = { item ->
-            QuestCard(item)
+
+        itemsIndexed(questList, itemContent = { i, item ->
+            if (i == 0) {
+                SpecialQuestCard(item)
+            } else {
+                QuestCard(item)
+            }
+
         })
     }
 }
