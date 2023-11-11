@@ -11,6 +11,8 @@ import kotlinx.coroutines.tasks.await
 import org.json.JSONArray
 
 suspend fun fetchLeaderboard(): List<User> {
+    Log.i("diskut", "fetchLeaderboard called")
+
     val storage = Firebase.storage
     var storageRef = storage.reference
 
@@ -37,9 +39,6 @@ suspend fun fetchLeaderboard(): List<User> {
         leaderboard.reverse() // leaderboard is now 1st, then 2nd, then 3rd
         return@continueWith leaderboard.toList()
     }.await()
-
-
-//}
 }
 fun uploadLeaderboard(leaderboard: List<User>) {
     // Upload leaderboard

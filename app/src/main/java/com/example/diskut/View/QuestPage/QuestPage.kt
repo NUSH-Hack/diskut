@@ -1,6 +1,7 @@
 package com.example.diskut.View.QuestPage
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -13,11 +14,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.diskut.Controller.fetchLeaderboard
 import com.example.diskut.Model.User
 import com.example.diskut.Model.UserType
 import com.example.diskut.test_quest
 import com.example.diskut.test_users
 import com.example.diskut.ui.theme.AppTheme
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -25,7 +28,9 @@ fun QuestPage(leaderboard: List<User>, questList: List<Quest>) {
     Column (modifier = Modifier.fillMaxSize().padding(24.dp)) {
         Spacer(modifier = Modifier.height(24.dp))
 
-        Leaderboard(leaderboard = leaderboard)
+        if (leaderboard.isNotEmpty()) {
+            Leaderboard(leaderboard = leaderboard)
+        }
 
         Spacer(modifier = Modifier.height(24.dp))
 

@@ -34,7 +34,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
-val yueheng = User("h2010157@nushigh.edu.sg", "Wong Yue Heng", UserType.STUDENT, "Year 4", 0)
+val yueheng = User("h2010157@nushigh.edu.sg", "Wong Yue Heng", UserType.STUDENT, "Year 4", 50)
 val warren = User("h2230006@nushigh.edu.sg", "Warren Zhou", UserType.STUDENT, "Year 4", 10)
 
 

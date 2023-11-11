@@ -8,10 +8,10 @@ import kotlinx.serialization.json.Json
 
 @Serializable
 class User (
-    val email: String,
-    val name: String,
+    var email: String,
+    var name: String,
     val type: UserType,
-    val value: String, // Year if Student, Department if Teacher, Job if Staff
+    var value: String, // Year if Student, Department if Teacher, Job if Staff
     val points: Int
 ) {
     val majors: ArrayList<String> = arrayListOf()

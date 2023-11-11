@@ -54,24 +54,24 @@ val test_users: List<User> = listOf(
 
 val test_quest: List<Quest> = listOf<Quest>(
     Quest(
-        description = "Talk to 100 people",
+        description = "Talk to 10 people",
         completed = 1,
-        goal = 100
+        goal = 10
     ),
     Quest(
-        description = "Talk to 100 people",
-        completed = 1,
-        goal = 100
+        description = "Talk to a Year 2",
+        completed = 0,
+        goal = 1
     ),
     Quest(
-        description = "Talk to 100 people",
-        completed = 1,
-        goal = 100
+        description = "Talk to a Math department teacher",
+        completed = 0,
+        goal = 1
     ),
     Quest(
-        description = "Talk to 100 people",
-        completed = 1,
-        goal = 100
+        description = "Talk to Mr Andre Jusuf",
+        completed = 0,
+        goal = 1
     )
 )
 
